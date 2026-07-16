@@ -633,6 +633,25 @@ function setupModals() {
   $("lb-close").addEventListener("click", () => closeBackdrop($("lb-backdrop")));
   $("end-close").addEventListener("click", () => { closeBackdrop($("end-backdrop")); $("treccani-link").parentElement.style.display = ""; });
   $("end-show-lb").addEventListener("click", () => { closeBackdrop($("end-backdrop")); $("treccani-link").parentElement.style.display = ""; openLeaderboard(currentDayOffset); });
+
+  $("end-share").addEventListener("click", async () => {
+    const g = Game.getShareGrid();
+    if (!g) return;
+    const text = `Sirius Parole #${g.dayOffset} ${g.score}\n\n${g.grid}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        alert("Risultato copiato! Incollalo dove vuoi.");
+      }
+    } catch (_) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Risultato copiato! Incollalo dove vuoi.");
+      } catch (__) {}
+    }
+  });
   $("warn-close").addEventListener("click", () => closeBackdrop($("warn-backdrop")));
   $("reason-close").addEventListener("click", () => closeBackdrop($("reason-backdrop")));
   $("detail-close").addEventListener("click", () => closeBackdrop($("detail-backdrop")));
@@ -653,6 +672,83 @@ function setupModals() {
 }
 
 // =========================================================
+//  GUIDA (pulsante ?)
+// =========================================================
+const HELP_CONTENT = {
+  istruzioni: `
+    <div class="help-section">
+      <h3>Come si gioca</h3>
+      <p>Indovina la <strong>parola del giorno</strong>: 5 lettere, 6 tentativi. Ogni giorno una parola nuova, uguale per tutti.</p>
+      <p>Dopo ogni tentativo, i colori ti dicono quanto sei vicino:</p>
+      <div class="help-demo">
+        <div class="tile correct">C</div><div class="tile">A</div><div class="tile">N</div><div class="tile">E</div><div class="tile">S</div>
+      </div>
+      <p><strong>Verde</strong>: la lettera c'è ed è nel posto giusto.</p>
+      <div class="help-demo">
+        <div class="tile"></div><div class="tile present">A</div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+      </div>
+      <p><strong>Giallo</strong>: la lettera c'è nella parola, ma in un'altra posizione.</p>
+      <div class="help-demo">
+        <div class="tile"></div><div class="tile"></div><div class="tile absent">N</div><div class="tile"></div><div class="tile"></div>
+      </div>
+      <p><strong>Grigio</strong>: la lettera non è presente nella parola.</p>
+      <p>Hai una sola partita al giorno, quindi pensaci bene!</p>
+    </div>`,
+  regole: `
+    <div class="help-section">
+      <h3>Le regole del gioco</h3>
+      <p>Sirius Parole è prima di tutto un <strong>gioco</strong>, e come ogni gioco ha senso solo se si gioca lealmente. Ecco le regole che ci diamo:</p>
+      <ul>
+        <li><strong>Non barare</strong>: niente aiuti esterni, niente controllo della parola in altri modi.</li>
+        <li><strong>Non spiare</strong> lo schermo di chi ti sta vicino mentre gioca.</li>
+        <li><strong>Non chiedere</strong> la parola a chi l'ha già fatta, e non chiedere indizi.</li>
+        <li>Se hai <strong>già giocato</strong>, non dire la parola ad alta voce, non scriverla, non darla a nessuno.</li>
+        <li><strong>Niente indizi</strong> agli altri, nemmeno "scherzosi" o mascherati.</li>
+      </ul>
+      <p>In fondo il senso è semplice: che gusto c'è a vincere barando? La classifica è bella se è vera. Giochiamo nel rispetto di tutti e divertiamoci.</p>
+      <div class="help-note">Chi non rispetta le regole può essere ammonito dagli altri giocatori, e accumulare ammonizioni porta a penalità in classifica.</div>
+    </div>`,
+  classifica: `
+    <div class="help-section">
+      <h3>Come funziona la classifica</h3>
+      <p>Ci sono tre classifiche, nei tab del trofeo 🏆:</p>
+      <h3>Oggi</h3>
+      <p>I risultati del giorno: chi indovina in meno tentativi sta più in alto. Chi non indovina compare con una <strong>X</strong>. I primi tre hanno le medaglie 🥇🥈🥉.</p>
+      <h3>Mese</h3>
+      <p>Somma dei tentativi di tutto il mese: <strong>meno punti = meglio</strong>. Ogni giorno giocato aggiunge i tuoi tentativi (da 1 a 6). Se <strong>non giochi</strong> un giorno, o non indovini, quel giorno vale 7 punti di penalità.</p>
+      <p>A parità di punti, l'ordine è deciso così: prima chi ha <strong>più vittorie</strong>, poi chi ha giocato <strong>più partite</strong>, e infine l'ordine alfabetico del nome.</p>
+      <p>Le frecce (▲▼) mostrano se sei salito o sceso rispetto a ieri. Chi si iscrive a mese iniziato riceve i punti di penalità solo dai giorni successivi al suo ingresso.</p>
+      <h3>Albo d'oro</h3>
+      <p>I vincitori dei mesi passati, per sempre. Il vincitore del mese viene "sigillato" qui alla fine di ogni mese.</p>
+    </div>`,
+  ammonizioni: `
+    <div class="help-section">
+      <h3>Le ammonizioni</h3>
+      <p>Servono a segnalare chi non gioca lealmente. Funzionano come i cartellini nel calcio.</p>
+      <p>Puoi ammonire una persona <strong>una volta al giorno</strong> (dal menu ⚠). Accanto al nome di chi è stato ammonito compare un cartellino con il numero:</p>
+      <p><span class="card-badge yellow"><span class="card-rect"></span>3</span> giallo: ammonizioni ricevute oggi (da 1 a 4).</p>
+      <p><span class="card-badge red"><span class="card-rect"></span>5</span> rosso: ha raggiunto 5 ammonizioni.</p>
+      <p>Quando una persona riceve <strong>5 ammonizioni</strong> nello stesso giorno, scatta automaticamente una <strong>penalità di 10 punti</strong> in classifica. Le ammonizioni si azzerano ogni giorno.</p>
+      <p>Puoi ritirare la tua ammonizione, ma solo <strong>prima</strong> che scatti la penalità (sotto le 5). Cliccando sul cartellino vedi chi ha ammonito e perché.</p>
+      <div class="help-note">
+        <strong>Usale con onestà.</strong> Ammonisci solo in casi <strong>evidenti</strong>, non per gioco, per antipatia o per scherzo. Non chiedere ad altri di ammonire qualcuno: organizzare "cordate" contro una persona è scorretto quanto barare. Le ammonizioni sono uno strumento di rispetto, non un'arma.
+      </div>
+    </div>`,
+};
+
+function setupHelp() {
+  const show = (tab) => {
+    $("help-content").innerHTML = HELP_CONTENT[tab] || "";
+    $("help-tabs").querySelectorAll(".tab-btn").forEach((b) => b.classList.toggle("active", b.dataset.htab === tab));
+  };
+  $("help-btn").addEventListener("click", () => { show("istruzioni"); openBackdrop($("help-backdrop")); });
+  $("help-close").addEventListener("click", () => closeBackdrop($("help-backdrop")));
+  $("help-tabs").querySelectorAll(".tab-btn").forEach((b) => b.addEventListener("click", () => show(b.dataset.htab)));
+  const bd = $("help-backdrop");
+  bd.addEventListener("click", (e) => { if (e.target === bd) closeBackdrop(bd); });
+}
+
+// =========================================================
 //  AVVIO
 // =========================================================
 (async function main() {
@@ -663,6 +759,7 @@ function setupModals() {
   setupFab();
   setupCodeModal();
   setupModals();
+  setupHelp();
 
   if (!getCode()) {
     promptCode();

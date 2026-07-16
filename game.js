@@ -310,8 +310,9 @@ function winSequence(r, result, done) {
 // ---- Coriandoli (canvas leggero, nessuna libreria) ----
 function launchConfetti() {
   // Vibrazione del telefono (Android). Su iPhone l'API non è supportata: viene ignorata senza errori.
+  // Pattern: 3 vibrazioni distinte in crescendo, con pause tra loro.
   try {
-    if (navigator.vibrate) navigator.vibrate([0, 90, 60, 90, 60, 160]);
+    if (navigator.vibrate) navigator.vibrate([100, 120, 100, 120, 220]);
   } catch (_) {}
   const old = document.getElementById("confetti-canvas");
   if (old) old.remove();
@@ -447,5 +448,19 @@ export const Game = {
   // Solo per il leaderboard, a fine partita, per il link Treccani
   getSolutionIfFinished() {
     return status === "playing" ? null : _solution;
+  },
+
+  // Griglia di emoji colorati (senza lettere) per la condivisione
+  getShareGrid() {
+    if (status === "playing") return null;
+    const EMOJI = { correct: "🟩", present: "🟨", absent: "⬛" };
+    const rowsPlayed = status === "won" ? currentRow + 1 : MAX_ROWS;
+    const lines = [];
+    for (let r = 0; r < rowsPlayed; r++) {
+      if (!evaluations[r] || !evaluations[r][0]) continue;
+      lines.push(evaluations[r].map((e) => EMOJI[e] || "⬛").join(""));
+    }
+    const score = status === "won" ? `${currentRow + 1}/6` : "X/6";
+    return { dayOffset: _dayOffset, score, grid: lines.join("\n") };
   },
 };

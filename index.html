@@ -21,6 +21,7 @@
   <div id="app">
     <header>
       <img id="logo" src="images/sirius-parole-logo.png" alt="Sirius Parole" />
+      <button id="help-btn" type="button" aria-label="Aiuto">?</button>
     </header>
 
     <main>
@@ -44,6 +45,23 @@
       <button class="fab-btn fab-ammonizioni" id="fab-ammonizioni" type="button" aria-label="Ammonizioni"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="9" height="15" rx="1.6" fill="#e2c94b" transform="rotate(-15 10 10)"/><rect x="10.5" y="4" width="9" height="15" rx="1.6" fill="#e24b4a" transform="rotate(13 15 11)"/></svg></button>
     </div>
     <button class="fab-main" id="fab-main" type="button" aria-label="Menu">🏆</button>
+  </div>
+
+  <!-- Modal: aiuto (Istruzioni / Regole / Classifica / Ammonizioni) -->
+  <div class="backdrop" id="help-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Guida</h2>
+        <button class="close-x" id="help-close" type="button">✕</button>
+      </div>
+      <div class="tabs" id="help-tabs">
+        <button class="tab-btn active" data-htab="istruzioni" type="button">Istruzioni</button>
+        <button class="tab-btn" data-htab="regole" type="button">Regole</button>
+        <button class="tab-btn" data-htab="classifica" type="button">Classifica</button>
+        <button class="tab-btn" data-htab="ammonizioni" type="button">Ammonizioni</button>
+      </div>
+      <div id="help-content" style="overflow-y:auto; max-height:60vh; font-size:14px; line-height:1.5;"></div>
+    </div>
   </div>
 
   <!-- Modal: codice invito -->
@@ -90,6 +108,7 @@
         <div style="font-size:13px; color:#aaa; margin-bottom:6px;">Non conosci questa parola?</div>
         <a id="treccani-link" href="#" target="_blank" rel="noopener">Cerca su Treccani →</a>
       </div>
+      <button class="btn-primary" id="end-share" type="button" style="background:#3a6ea5;margin-bottom:8px;">📤 Condividi risultato</button>
       <button class="btn-primary" id="end-show-lb" type="button">Vedi classifica</button>
     </div>
   </div>

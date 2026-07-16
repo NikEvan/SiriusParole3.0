@@ -53,6 +53,37 @@ header img#logo {
   height: 40px;
   width: auto;
 }
+#help-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(133,192,249,0.5);
+  background: transparent;
+  color: #85c0f9;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.7;
+}
+#help-btn:active { opacity: 1; }
+.help-section h3 { font-size: 16px; margin: 14px 0 6px; color: var(--text); }
+.help-section p { margin: 6px 0; color: var(--text); }
+.help-section ul { margin: 6px 0; padding-left: 18px; }
+.help-section li { margin: 4px 0; }
+.help-demo { display: flex; gap: 4px; margin: 8px 0; }
+.help-demo .tile {
+  width: 34px; height: 34px; font-size: 18px; border-radius: 7px;
+}
+.help-note {
+  background: rgba(226,75,74,0.12);
+  border-left: 3px solid var(--danger);
+  padding: 8px 10px; border-radius: 6px; margin: 10px 0;
+  font-size: 13px;
+}
 
 /* ---- Area gioco ---- */
 main {
