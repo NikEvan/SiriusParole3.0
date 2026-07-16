@@ -1,0 +1,30 @@
+name: Nightly skip-marking
+
+on:
+  schedule:
+    # 00:30 ora italiana = 22:30 UTC (estate) / 23:30 UTC (inverno).
+    # Mettiamo 23:30 UTC che corrisponde a 00:30 italiana in inverno, 01:30 in estate.
+    # In ogni caso il job guarda IERI italiana, quindi va sempre bene.
+    - cron: '30 23 * * *'
+  # Permette anche di lanciarlo manualmente dalla UI di GitHub per testare
+  workflow_dispatch:
+
+jobs:
+  mark-skipped:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install firebase-admin
+
+      - name: Run nightly job
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: python nightly_job.py
