@@ -263,7 +263,7 @@ main {
   justify-content: center;
 }
 .fab-classifica { background: var(--accent); color: #fff; }
-.fab-ammonizioni { background: var(--warn); color: #121213; }
+.fab-ammonizioni { background: #2a2a30; color: #fff; }
 
 /* ---- Modali ---- */
 .backdrop {
@@ -369,16 +369,23 @@ main {
 .card-badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 12px;
+  gap: 4px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 5px;
   margin-left: 6px;
   cursor: pointer;
+  vertical-align: middle;
 }
-.card-badge.yellow { background: var(--warn); color: #121213; }
-.card-badge.red    { background: var(--danger); color: #fff; }
+.card-rect {
+  display: inline-block;
+  width: 11px;
+  height: 15px;
+  border-radius: 2px;
+}
+.card-badge.yellow .card-rect { background: var(--warn); }
+.card-badge.red    .card-rect { background: var(--danger); }
+.card-badge.yellow { color: var(--warn); }
+.card-badge.red    { color: var(--danger); }
 
 /* ---- Treccani box ---- */
 .treccani-box {

@@ -8,9 +8,7 @@ import {
 import { Game } from "./game.js";
 
 // ---- Firebase config (stesso progetto parole-siriusv2) ----
-// ===== CONFIG DI TEST (parole-sirius-3) =====
-// ATTENZIONE: questa è la config del database di TEST, non quello ufficiale.
-// Prima del lancio vero, sostituire con la config di parole-siriusv2.
+// ===== CONFIG DI TEST (parole-sirius-3) — sostituire con parole-siriusv2 al lancio =====
 const firebaseConfig = {
   apiKey: "AIzaSyBHF68ZRiezbM_bzKPmGG9WNId8afAeikk",
   authDomain: "parole-sirius-3.firebaseapp.com",
@@ -267,7 +265,7 @@ function badgeHtml(code) {
   const w = warningsCache[code];
   if (!w || !w.count) return "";
   const cls = w.count >= WARNING_THRESHOLD ? "red" : "yellow";
-  return `<span class="card-badge ${cls}" data-warn-detail="${code}">⚠ ${w.count}</span>`;
+  return `<span class="card-badge ${cls}" data-warn-detail="${code}"><span class="card-rect"></span>${w.count}</span>`;
 }
 
 function renderDaily(items, myCode) {
