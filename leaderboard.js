@@ -47,6 +47,8 @@ const INVITE_CODES = {
   "FEB-6V9A":    { name: "Fabietto", since: "2026-06-23" },
   "FAB-NVYN":    { name: "Fabio",  since: "2026-06-26" },
   "SIM-9YQY":    { name: "Simone", since: "2026-07-09" },
+  "ERI-4Y6Y": { name: "Erick", since: "2026-07-15" },
+  "FAB-TR4R": { name: "Fabio", since: "2026-07-16" },
 };
 
 // ---- Costanti (devono combaciare col job) ----
