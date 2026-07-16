@@ -1,0 +1,36 @@
+name: Recovery (one-shot)
+
+# SOLO manuale: nessuno schedule. Si lancia da Actions -> Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      start_offset:
+        description: "dayOffset iniziale (1857 = 1 luglio 2026)"
+        required: false
+        default: "1857"
+      end_offset:
+        description: "dayOffset finale incluso (1867 = 11 luglio 2026)"
+        required: false
+        default: "1867"
+
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install firebase-admin
+
+      - name: Run recovery job
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          RECOVERY_START_OFFSET: ${{ github.event.inputs.start_offset }}
+          RECOVERY_END_OFFSET: ${{ github.event.inputs.end_offset }}
+        run: python recovery_job.py
