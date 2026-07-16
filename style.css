@@ -24,14 +24,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: var(--bg);
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0.018) 0px,
-    rgba(255,255,255,0.018) 2px,
-    transparent 2px,
-    transparent 22px
-  );
+  background: var(--bg);
   color: var(--text);
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   -webkit-tap-highlight-color: transparent;
@@ -116,7 +109,7 @@ main {
 
 /* Vibrazione crescente prima del festeggiamento */
 .tile.vibrate { animation: vibrate 0.7s ease-in-out; }
-.tile.vibrate-win { animation: vibrateWin 2s linear; }
+.tile.vibrate-win { animation: vibrateWin 1.5s linear; }
 /* Bounce di vittoria */
 .tile.bounce { animation: bounce 0.55s ease; }
 

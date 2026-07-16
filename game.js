@@ -304,11 +304,15 @@ function winSequence(r, result, done) {
       launchConfetti();
       setTimeout(done, 2600);
     });
-  }, 2000);
+  }, 1500);
 }
 
 // ---- Coriandoli (canvas leggero, nessuna libreria) ----
 function launchConfetti() {
+  // Vibrazione del telefono (Android). Su iPhone l'API non è supportata: viene ignorata senza errori.
+  try {
+    if (navigator.vibrate) navigator.vibrate([0, 90, 60, 90, 60, 160]);
+  } catch (_) {}
   const old = document.getElementById("confetti-canvas");
   if (old) old.remove();
   const canvas = document.createElement("canvas");
