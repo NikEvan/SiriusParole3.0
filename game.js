@@ -234,15 +234,20 @@ function submitGuess() {
   evaluations[currentRow] = result;
   updateKeyState(guess, result);
 
+  const isWin = guess === _solution;
+  const rowToWin = currentRow;
+
   // Animazione flip + applica colori
   revealRow(currentRow, result, () => {
     renderKeyboard();
-    if (guess === _solution) {
+    if (isWin) {
       status = "won";
       locked = true;
       saveState();
-      toast("Bravo!");
-      finishGame();
+      winSequence(rowToWin, () => {
+        toast("Bravo!");
+        finishGame();
+      });
     } else if (currentRow >= MAX_ROWS - 1) {
       status = "lost";
       locked = true;
@@ -256,6 +261,10 @@ function submitGuess() {
   });
 }
 
+// Ritmo tranquillo: flip un po' piu' lento e distanziato
+const FLIP_STEP = 260;   // ritardo tra una lettera e l'altra (era 180)
+const FLIP_HALF = 220;   // meta' giro, applica il colore (era 150)
+
 function revealRow(r, result, done) {
   const tiles = [];
   for (let c = 0; c < WORD_LENGTH; c++) {
@@ -267,10 +276,78 @@ function revealRow(r, result, done) {
       setTimeout(() => {
         tile.classList.remove("correct", "present", "absent");
         tile.classList.add(result[c]);
-      }, 150);
-      if (c === WORD_LENGTH - 1) setTimeout(done, 300);
-    }, c * 180);
+      }, FLIP_HALF);
+      if (c === WORD_LENGTH - 1) setTimeout(done, 450);
+    }, c * FLIP_STEP);
   });
+}
+
+// ---- Coreografia di vittoria: vibrazione -> bounce -> coriandoli ----
+function winSequence(r, done) {
+  const tiles = [];
+  for (let c = 0; c < WORD_LENGTH; c++) {
+    tiles.push(boardEl().querySelector(`.tile[data-row="${r}"][data-col="${c}"]`));
+  }
+  tiles.forEach((t) => t && t.classList.add("vibrate"));
+  setTimeout(() => {
+    tiles.forEach((t) => t && t.classList.remove("vibrate"));
+    tiles.forEach((t, c) => {
+      setTimeout(() => {
+        if (!t) return;
+        t.classList.remove("bounce");
+        void t.offsetWidth;
+        t.classList.add("bounce");
+      }, c * 110);
+    });
+    launchConfetti();
+    setTimeout(done, 5 * 110 + 700);
+  }, 700);
+}
+
+// ---- Coriandoli (canvas leggero, nessuna libreria) ----
+function launchConfetti() {
+  const old = document.getElementById("confetti-canvas");
+  if (old) old.remove();
+  const canvas = document.createElement("canvas");
+  canvas.id = "confetti-canvas";
+  canvas.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2000;";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width = window.innerWidth;
+  const H = canvas.height = window.innerHeight;
+  const colors = ["#6aaa64", "#c9b458", "#85c0f9", "#f5793a", "#ffffff"];
+  const parts = [];
+  for (let i = 0; i < 130; i++) {
+    parts.push({
+      x: Math.random() * W,
+      y: -20 - Math.random() * H * 0.3,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 3 + Math.random() * 4,
+      size: 5 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI,
+      vr: (Math.random() - 0.5) * 0.3,
+    });
+  }
+  const startT = Date.now();
+  const DURATION = 2600;
+  function frame() {
+    const elapsed = Date.now() - startT;
+    ctx.clearRect(0, 0, W, H);
+    parts.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += 0.04;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, 1 - elapsed / DURATION);
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+    if (elapsed < DURATION) requestAnimationFrame(frame);
+    else canvas.remove();
+  }
+  requestAnimationFrame(frame);
 }
 
 function shakeRow() {

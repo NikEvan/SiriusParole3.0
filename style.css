@@ -102,10 +102,15 @@ main {
   border-color: var(--tile-filled-border);
 }
 .tile.pop { animation: pop 0.1s ease; }
-.tile.flip { animation: flip 0.3s ease forwards; }
+.tile.flip { animation: flip 0.44s ease forwards; }   /* ritmo tranquillo (era 0.3s) */
 .tile.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
 .tile.present { background: var(--present); border-color: var(--present); color: #fff; }
 .tile.absent  { background: var(--absent);  border-color: var(--absent);  color: #fff; }
+
+/* Vibrazione crescente prima del festeggiamento */
+.tile.vibrate { animation: vibrate 0.7s ease-in-out; }
+/* Bounce di vittoria */
+.tile.bounce { animation: bounce 0.55s ease; }
 
 @keyframes pop {
   0% { transform: scale(1); }
@@ -116,6 +121,24 @@ main {
   0% { transform: rotateX(0); }
   50% { transform: rotateX(90deg); }
   100% { transform: rotateX(0); }
+}
+@keyframes vibrate {
+  0%   { transform: translate(0,0) rotate(0); }
+  20%  { transform: translate(-1px,1px) rotate(-1deg); }
+  40%  { transform: translate(2px,-1px) rotate(1deg); }
+  55%  { transform: translate(-2px,2px) rotate(-1.5deg); }
+  70%  { transform: translate(3px,-2px) rotate(2deg); }
+  85%  { transform: translate(-3px,2px) rotate(-2deg); }
+  100% { transform: translate(0,0) rotate(0); }
+}
+@keyframes bounce {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-24px); }
+  50%  { transform: translateY(0); }
+  65%  { transform: translateY(-10px); }
+  80%  { transform: translateY(0); }
+  90%  { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
 }
 .row.shake { animation: shake 0.5s ease; }
 @keyframes shake {
