@@ -304,7 +304,7 @@ function winSequence(r, result, done) {
       launchConfetti();
       setTimeout(done, 2600);
     });
-  }, 3000);
+  }, 2000);
 }
 
 // ---- Coriandoli (canvas leggero, nessuna libreria) ----

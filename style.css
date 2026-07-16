@@ -24,7 +24,14 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0.018) 0px,
+    rgba(255,255,255,0.018) 2px,
+    transparent 2px,
+    transparent 22px
+  );
   color: var(--text);
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   -webkit-tap-highlight-color: transparent;
@@ -50,7 +57,7 @@ header {
   flex: none;
 }
 header img#logo {
-  height: 34px;
+  height: 40px;
   width: auto;
 }
 
@@ -109,7 +116,7 @@ main {
 
 /* Vibrazione crescente prima del festeggiamento */
 .tile.vibrate { animation: vibrate 0.7s ease-in-out; }
-.tile.vibrate-win { animation: vibrateWin 3s linear; }
+.tile.vibrate-win { animation: vibrateWin 2s linear; }
 /* Bounce di vittoria */
 .tile.bounce { animation: bounce 0.55s ease; }
 
@@ -132,39 +139,36 @@ main {
   85%  { transform: translate(-3px,2px) rotate(-2deg); }
   100% { transform: translate(0,0) rotate(0); }
 }
-/* Vibrazione crescente 3s: scatti molto fitti e rapidi, ampiezza crescente */
+/* Vibrazione crescente 2s: parte piccola e veloce, si scosta sempre di piu' */
 @keyframes vibrateWin {
   0%   { transform: translate(0,0) rotate(0); }
-  2%   { transform: translate(1.5px,-1px) rotate(1deg); }
-  4%   { transform: translate(-1.5px,1px) rotate(-1deg); }
-  6%   { transform: translate(1.5px,1px) rotate(1deg); }
-  8%   { transform: translate(-1.5px,-1px) rotate(-1deg); }
-  10%  { transform: translate(1.8px,-1.2px) rotate(1.2deg); }
-  12%  { transform: translate(-1.8px,1.2px) rotate(-1.2deg); }
-  14%  { transform: translate(1.8px,1.2px) rotate(1.2deg); }
-  16%  { transform: translate(-1.8px,-1.2px) rotate(-1.2deg); }
-  18%  { transform: translate(2px,-1.4px) rotate(1.4deg); }
-  20%  { transform: translate(-2px,1.4px) rotate(-1.4deg); }
-  24%  { transform: translate(2.2px,1.4px) rotate(1.4deg); }
-  28%  { transform: translate(-2.2px,-1.6px) rotate(-1.6deg); }
-  32%  { transform: translate(2.4px,-1.6px) rotate(1.6deg); }
-  36%  { transform: translate(-2.4px,1.8px) rotate(-1.8deg); }
-  40%  { transform: translate(2.6px,1.8px) rotate(1.8deg); }
-  44%  { transform: translate(-2.6px,-2px) rotate(-2deg); }
-  48%  { transform: translate(2.8px,-2px) rotate(2deg); }
-  52%  { transform: translate(-2.8px,2.2px) rotate(-2.2deg); }
-  56%  { transform: translate(3px,2.2px) rotate(2.2deg); }
-  60%  { transform: translate(-3px,-2.4px) rotate(-2.4deg); }
-  64%  { transform: translate(3.3px,-2.4px) rotate(2.6deg); }
-  68%  { transform: translate(-3.3px,2.6px) rotate(-2.6deg); }
-  72%  { transform: translate(3.6px,2.6px) rotate(2.8deg); }
-  76%  { transform: translate(-3.6px,-2.8px) rotate(-2.8deg); }
-  80%  { transform: translate(3.9px,-2.8px) rotate(3deg); }
-  84%  { transform: translate(-3.9px,3px) rotate(-3deg); }
-  88%  { transform: translate(4.2px,3px) rotate(3.2deg); }
-  92%  { transform: translate(-4.2px,-3.2px) rotate(-3.2deg); }
-  96%  { transform: translate(4.5px,-3.4px) rotate(3.5deg); }
-  100% { transform: translate(-4.5px,3.4px) rotate(-3.5deg); }
+  3%   { transform: translate(0.6px,-0.5px) rotate(0.4deg); }
+  6%   { transform: translate(-0.6px,0.5px) rotate(-0.4deg); }
+  9%   { transform: translate(0.7px,0.5px) rotate(0.5deg); }
+  12%  { transform: translate(-0.7px,-0.5px) rotate(-0.5deg); }
+  15%  { transform: translate(0.9px,-0.6px) rotate(0.6deg); }
+  18%  { transform: translate(-0.9px,0.6px) rotate(-0.6deg); }
+  21%  { transform: translate(1.1px,0.7px) rotate(0.7deg); }
+  24%  { transform: translate(-1.1px,-0.7px) rotate(-0.7deg); }
+  28%  { transform: translate(1.4px,-0.9px) rotate(0.9deg); }
+  32%  { transform: translate(-1.4px,0.9px) rotate(-0.9deg); }
+  36%  { transform: translate(1.7px,1px) rotate(1.1deg); }
+  40%  { transform: translate(-1.7px,-1px) rotate(-1.1deg); }
+  44%  { transform: translate(2px,-1.3px) rotate(1.3deg); }
+  48%  { transform: translate(-2px,1.3px) rotate(-1.3deg); }
+  52%  { transform: translate(2.4px,1.4px) rotate(1.5deg); }
+  56%  { transform: translate(-2.4px,-1.4px) rotate(-1.5deg); }
+  60%  { transform: translate(2.8px,-1.7px) rotate(1.8deg); }
+  64%  { transform: translate(-2.8px,1.7px) rotate(-1.8deg); }
+  68%  { transform: translate(3.2px,1.9px) rotate(2.1deg); }
+  72%  { transform: translate(-3.2px,-1.9px) rotate(-2.1deg); }
+  76%  { transform: translate(3.6px,-2.2px) rotate(2.4deg); }
+  80%  { transform: translate(-3.6px,2.2px) rotate(-2.4deg); }
+  84%  { transform: translate(4.1px,2.4px) rotate(2.8deg); }
+  88%  { transform: translate(-4.1px,-2.4px) rotate(-2.8deg); }
+  92%  { transform: translate(4.6px,-2.7px) rotate(3.2deg); }
+  96%  { transform: translate(-4.6px,2.7px) rotate(-3.2deg); }
+  100% { transform: translate(5px,-3px) rotate(3.6deg); }
 }
 @keyframes bounce {
   0%   { transform: translateY(0); }
