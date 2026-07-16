@@ -408,6 +408,10 @@ export const Game = {
     // Input da tastiera fisica
     document.addEventListener("keydown", (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
+      // Ignora se c'è un modale aperto (es. inserimento codice) o se si scrive in un input
+      if (document.querySelector(".backdrop.show")) return;
+      const tag = (e.target && e.target.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable)) return;
       const k = e.key.toLowerCase();
       if (k === "enter") return handleKey("invio");
       if (k === "backspace") return handleKey("canc");
