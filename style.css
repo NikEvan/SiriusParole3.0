@@ -109,7 +109,7 @@ main {
 
 /* Vibrazione crescente prima del festeggiamento */
 .tile.vibrate { animation: vibrate 0.7s ease-in-out; }
-.tile.vibrate-win { animation: vibrateWin 3s ease-in; }
+.tile.vibrate-win { animation: vibrateWin 3s linear; }
 /* Bounce di vittoria */
 .tile.bounce { animation: bounce 0.55s ease; }
 
@@ -132,20 +132,21 @@ main {
   85%  { transform: translate(-3px,2px) rotate(-2deg); }
   100% { transform: translate(0,0) rotate(0); }
 }
-/* Vibrazione crescente 3s: da quasi ferma a molto intensa verso la fine */
+/* Vibrazione crescente 3s: gia' percettibile da subito, cresce fino a molto intensa */
 @keyframes vibrateWin {
   0%    { transform: translate(0,0) rotate(0); }
-  10%   { transform: translate(-0.4px,0.4px) rotate(-0.3deg); }
-  20%   { transform: translate(0.6px,-0.4px) rotate(0.4deg); }
-  30%   { transform: translate(-0.8px,0.6px) rotate(-0.6deg); }
-  40%   { transform: translate(1px,-0.8px) rotate(0.8deg); }
-  50%   { transform: translate(-1.4px,1px) rotate(-1deg); }
-  60%   { transform: translate(1.8px,-1.2px) rotate(1.3deg); }
-  70%   { transform: translate(-2.2px,1.6px) rotate(-1.6deg); }
-  80%   { transform: translate(2.8px,-2px) rotate(2deg); }
-  88%   { transform: translate(-3.4px,2.4px) rotate(-2.4deg); }
-  94%   { transform: translate(3.8px,-2.6px) rotate(2.8deg); }
-  100%  { transform: translate(-4px,2.8px) rotate(-3deg); }
+  8%    { transform: translate(-1.5px,1px) rotate(-1deg); }
+  16%   { transform: translate(1.8px,-1.2px) rotate(1.2deg); }
+  24%   { transform: translate(-2px,1.4px) rotate(-1.4deg); }
+  32%   { transform: translate(2.2px,-1.6px) rotate(1.6deg); }
+  40%   { transform: translate(-2.5px,1.8px) rotate(-1.8deg); }
+  48%   { transform: translate(2.8px,-2px) rotate(2deg); }
+  56%   { transform: translate(-3px,2.2px) rotate(-2.2deg); }
+  64%   { transform: translate(3.3px,-2.4px) rotate(2.5deg); }
+  72%   { transform: translate(-3.6px,2.6px) rotate(-2.8deg); }
+  80%   { transform: translate(4px,-2.8px) rotate(3deg); }
+  88%   { transform: translate(-4.3px,3px) rotate(-3.3deg); }
+  100%  { transform: translate(4.5px,-3.2px) rotate(3.5deg); }
 }
 @keyframes bounce {
   0%   { transform: translateY(0); }

@@ -179,11 +179,15 @@ async function toggleWarning(dayOffset, targetCode, targetName, myCode, myName, 
   const monthlyRef = doc(db, "monthly", monthKey, "players", targetCode);
 
   return await runTransaction(db, async (tx) => {
+    // ---- FASE 1: TUTTE LE LETTURE PRIMA (regola Firestore) ----
     const snap = await tx.get(ref);
+    const mSnap = await tx.get(monthlyRef);
+
     let data = snap.exists() ? snap.data() : { count: 0, penaltyApplied: false, byList: [] };
     const byList = data.byList || [];
     const already = byList.findIndex((x) => x.by === myCode);
 
+    // ---- FASE 2: RAGIONAMENTO ----
     if (already >= 0) {
       // RITIRO — consentito solo se la penalità NON è ancora scattata
       if (data.penaltyApplied) {
@@ -206,11 +210,10 @@ async function toggleWarning(dayOffset, targetCode, targetName, myCode, myName, 
       data.penaltyApplied = true;
       penaltyJustApplied = true;
     }
-    tx.set(ref, data);
 
-    // Se scatta la penalità, +10 al totale mensile del bersaglio
+    // ---- FASE 3: TUTTE LE SCRITTURE DOPO ----
+    tx.set(ref, data);
     if (penaltyJustApplied) {
-      const mSnap = await tx.get(monthlyRef);
       if (mSnap.exists()) {
         tx.update(monthlyRef, { totalAttempts: increment(WARNING_PENALTY) });
       } else {
