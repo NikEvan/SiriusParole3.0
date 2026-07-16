@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Genera Codici Sirius</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; background: #1a1a1a; color: #eee; }
+  h1 { color: #6aaa64; }
+  textarea { width: 100%; min-height: 200px; background: #2a2a2a; color: #eee; border: 1px solid #444; padding: 10px; font-family: monospace; box-sizing: border-box; }
+  button { background: #6aaa64; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 6px; cursor: pointer; margin: 10px 5px; }
+  button:hover { background: #5a9a54; }
+  .out { background: #2a2a2a; padding: 15px; border-radius: 6px; margin-top: 15px; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+  .copy-block { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid #333; }
+  .copy-block:last-child { border-bottom: none; }
+  small { color: #888; }
+</style>
+</head>
+<body>
+<h1>Generatore Codici Sirius</h1>
+<p>Scrivi qui i nomi dei tuoi colleghi (uno per riga), poi clicca "Genera".</p>
+<textarea id="names" placeholder="Marco Rossi&#10;Anna Bianchi&#10;Giuseppe Verdi&#10;..."></textarea>
+<br>
+<button onclick="generate()">Genera codici</button>
+<button onclick="copyAll()">Copia tutto</button>
+<button onclick="copyForLeaderboard()">Copia per leaderboard.js</button>
+<button onclick="downloadCSV()">Scarica CSV</button>
+
+<div id="out" class="out" style="display:none"></div>
+<p><small>I codici evitano caratteri ambigui (0/O, 1/I/L) per facilitare la digitazione.
+Il blocco "per leaderboard.js" include <code>since</code> = data di oggi, così i nuovi
+giocatori partono con i tentativi dei giorni già passati nel mese (equità classifica mensile).</small></p>
+
+<script>
+let results = [];
+
+function randCode() {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // niente 0,O,1,I,L
+  let s = "";
+  for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function generate() {
+  const names = document.getElementById("names").value
+    .split("\n").map(n => n.trim()).filter(n => n);
+  if (!names.length) { alert("Inserisci almeno un nome"); return; }
+
+  const since = todayISO();
+  const usedCodes = new Set();
+  results = names.map(name => {
+    const cleanName = name.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 8) || "USER";
+    let code;
+    do { code = `${cleanName}-${randCode()}`; } while (usedCodes.has(code)); // evita duplicati
+    usedCodes.add(code);
+    return { name, code, since };
+  });
+
+  const out = document.getElementById("out");
+  out.style.display = "block";
+  out.innerHTML = results.map(r =>
+    `<div class="copy-block"><span><strong>${r.name}</strong></span><code>${r.code}</code></div>`
+  ).join("");
+}
+
+// Copia robusta: funziona anche aprendo il file con doppio clic (file://),
+// dove l'API moderna degli appunti è spesso bloccata. Fallback: execCommand,
+// e se anche quello non va, mostra il testo già pronto da copiare a mano.
+function copyText(txt, okMsg) {
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.position = "fixed";
+    ta.style.top = "0";
+    ta.style.left = "0";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (_) {}
+    document.body.removeChild(ta);
+    if (ok) alert(okMsg);
+    else window.prompt("Copia tutto con Ctrl+C, poi Invio:", txt);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => alert(okMsg)).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+function copyAll() {
+  if (!results.length) { alert("Genera prima"); return; }
+  const txt = results.map(r => `${r.name}: ${r.code}`).join("\n");
+  copyText(txt, "Copiato!");
+}
+
+function copyForLeaderboard() {
+  if (!results.length) { alert("Genera prima"); return; }
+  const txt = results.map(r =>
+    `  "${r.code}": { name: "${r.name.replace(/"/g, "'")}", since: "${r.since}" },`
+  ).join("\n");
+  copyText(txt, "Copiato! Incolla queste righe dentro INVITE_CODES in leaderboard.js");
+}
+
+function downloadCSV() {
+  if (!results.length) { alert("Genera prima"); return; }
+  const csv = "Nome,Codice\n" + results.map(r => `"${r.name}","${r.code}"`).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "codici-sirius.csv";
+  a.click();
+}
+</script>
+</body>
+</html>

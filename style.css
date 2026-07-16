@@ -1,0 +1,393 @@
+/* ====== SIRIUS PAROLE 3.0 — Stili ====== */
+
+:root {
+  --bg: #121213;
+  --bg-elev: #1a1a1b;
+  --bg-elev2: #26262c;
+  --text: #d7dadc;
+  --text-dim: #818384;
+  --border: #3a3a3c;
+  --tile-empty-border: #3a3a3c;
+  --tile-filled-border: #565758;
+  --correct: #538d4e;
+  --present: #b59f3b;
+  --absent: #3a3a3c;
+  --accent: #6aaa64;
+  --warn: #c9b458;
+  --danger: #e24b4a;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ---- Header ---- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  flex: none;
+}
+header img#logo {
+  height: 34px;
+  width: auto;
+}
+
+/* ---- Area gioco ---- */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* ---- Griglia ---- */
+#board-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 10px;
+}
+#board {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 6px;
+  padding: 6px;
+}
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.tile {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: 2px solid var(--tile-empty-border);
+  border-radius: 12px;                 /* Stile B: arrotondato */
+  transition: transform 0.08s ease, border-color 0.1s ease;
+  user-select: none;
+}
+.tile.filled {
+  border-color: var(--tile-filled-border);
+}
+.tile.pop { animation: pop 0.1s ease; }
+.tile.flip { animation: flip 0.3s ease forwards; }
+.tile.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+.tile.present { background: var(--present); border-color: var(--present); color: #fff; }
+.tile.absent  { background: var(--absent);  border-color: var(--absent);  color: #fff; }
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes flip {
+  0% { transform: rotateX(0); }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+.row.shake { animation: shake 0.5s ease; }
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+/* ---- Tastiera ---- */
+#keyboard {
+  padding: 8px 6px 12px;
+  flex: none;
+}
+.kb-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.key {
+  height: 52px;
+  min-width: 30px;
+  flex: 1;
+  max-width: 44px;
+  border: none;
+  border-radius: 8px;                  /* arrotondato in stile con la griglia */
+  background: var(--text-dim);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s ease, transform 0.05s ease;
+}
+.key:active { transform: scale(0.94); }
+.key-wide {
+  flex: 1.5;
+  max-width: 66px;
+  font-size: 12px;
+}
+.key.correct { background: var(--correct); }
+.key.present { background: var(--present); }
+.key.absent  { background: var(--absent); }
+
+/* ---- Toast ---- */
+#toast {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e7e7e7;
+  color: #121213;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 50;
+}
+#toast.show { opacity: 1; }
+
+/* ---- Bottone flottante espandibile ---- */
+#fab-wrap {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.fab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+#fab-wrap.open .fab-item {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.fab-label {
+  background: var(--bg-elev2);
+  color: var(--text);
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.fab-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+.fab-main {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fab-classifica { background: var(--accent); color: #fff; }
+.fab-ammonizioni { background: var(--warn); color: #121213; }
+
+/* ---- Modali ---- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.backdrop.show { display: flex; }
+.modal {
+  background: #1f1f23;
+  width: min(92vw, 440px);
+  max-height: 85vh;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.modal h2 { margin: 0 0 4px; font-size: 18px; }
+.modal .modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.modal .close-x {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.modal input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: #2a2a30;
+  color: #fff;
+  font-size: 15px;
+  text-transform: uppercase;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+.hint { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+.muted { color: var(--text-dim); font-size: 13px; }
+
+/* ---- Tab classifica ---- */
+.tabs { display: flex; gap: 6px; margin: 8px 0; }
+.tab-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+.tab-btn.active { background: var(--accent); }
+
+.lb-list { overflow-y: auto; max-height: 52vh; display: flex; flex-direction: column; gap: 6px; }
+.lb-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-elev2);
+  border-radius: 10px;
+}
+.lb-left { display: flex; align-items: center; gap: 10px; }
+.pill {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 700;
+  background: #3a3a44;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 13px;
+}
+.lb-item.gold   { background: linear-gradient(135deg,#7a5c0e,#3a2c08); border:1px solid #c9a227; }
+.lb-item.silver { background: linear-gradient(135deg,#555,#2a2a2a);    border:1px solid #b0b0b0; }
+.lb-item.bronze { background: linear-gradient(135deg,#6b3a17,#341c0a); border:1px solid #c47b3b; }
+.medal { font-size: 18px; margin-right: 4px; }
+.delta-up   { color: var(--accent); font-weight: 700; font-size: 12px; margin-left: 6px; }
+.delta-down { color: var(--danger); font-weight: 700; font-size: 12px; margin-left: 6px; }
+.delta-same { color: var(--text-dim); font-weight: 600; font-size: 12px; margin-left: 6px; }
+
+/* ---- Cartellino ammonizioni ---- */
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 5px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+.card-badge.yellow { background: var(--warn); color: #121213; }
+.card-badge.red    { background: var(--danger); color: #fff; }
+
+/* ---- Treccani box ---- */
+.treccani-box {
+  background: #2a2a30;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  margin: 6px 0;
+}
+.treccani-box a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+/* ---- Lista motivi ammonizione ---- */
+.reason-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: var(--bg-elev2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+.reason-btn:active { background: #333; }
+
+/* ---- Piccoli schermi ---- */
+@media (max-height: 700px) {
+  .tile { width: 50px; height: 50px; font-size: 26px; }
+  .key { height: 46px; }
+}
+@media (max-width: 360px) {
+  .tile { width: 52px; height: 52px; }
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Sirius Parole</title>
+  <meta name="description" content="Indovina la parola del giorno in 6 tentativi. Sfida i colleghi." />
+
+  <meta property="og:title" content="Sirius Parole" />
+  <meta property="og:description" content="Indovina la parola del giorno in 6 tentativi." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="images/sirius-parole-logo.png" />
+
+  <meta name="theme-color" content="#121213" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="images/favicon-32x32.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <img id="logo" src="images/sirius-parole-logo.png" alt="Sirius Parole" />
+    </header>
+
+    <main>
+      <div id="board-wrap">
+        <div id="board"></div>
+      </div>
+      <div id="keyboard"></div>
+    </main>
+
+    <div id="toast"></div>
+  </div>
+
+  <!-- Bottone flottante espandibile -->
+  <div id="fab-wrap">
+    <div class="fab-item">
+      <span class="fab-label">Classifica</span>
+      <button class="fab-btn fab-classifica" id="fab-classifica" type="button" aria-label="Classifica">🏆</button>
+    </div>
+    <div class="fab-item">
+      <span class="fab-label">Ammonizioni</span>
+      <button class="fab-btn fab-ammonizioni" id="fab-ammonizioni" type="button" aria-label="Ammonizioni">⚠️</button>
+    </div>
+    <button class="fab-main" id="fab-main" type="button" aria-label="Menu">🏆</button>
+  </div>
+
+  <!-- Modal: codice invito -->
+  <div class="backdrop" id="code-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Inserisci il tuo codice</h2>
+      </div>
+      <input id="code-input" maxlength="30" placeholder="ES. NICO-UF3Y" autocomplete="off" autocapitalize="characters" />
+      <div class="hint" id="code-error"></div>
+      <div style="margin-top:12px;">
+        <button class="btn-primary" id="code-ok" type="button">Entra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: classifica -->
+  <div class="backdrop" id="lb-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="lb-title">Classifica</h2>
+        <button class="close-x" id="lb-close" type="button">Chiudi</button>
+      </div>
+      <div class="tabs" id="lb-tabs">
+        <button class="tab-btn active" data-tab="daily" type="button">Oggi</button>
+        <button class="tab-btn" data-tab="monthly" type="button">Mese</button>
+        <button class="tab-btn" data-tab="hall" type="button">Albo d'oro</button>
+      </div>
+      <div class="muted" id="lb-subtitle"></div>
+      <div class="lb-list" id="lb-list"></div>
+      <div class="hint" id="lb-hint"></div>
+    </div>
+  </div>
+
+  <!-- Modal: fine partita (Treccani) -->
+  <div class="backdrop" id="end-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="end-title">Partita finita</h2>
+        <button class="close-x" id="end-close" type="button">✕</button>
+      </div>
+      <div id="end-message" style="font-size:15px; margin-bottom:6px;"></div>
+      <div class="treccani-box">
+        <div style="font-size:13px; color:#aaa; margin-bottom:6px;">Non conosci questa parola?</div>
+        <a id="treccani-link" href="#" target="_blank" rel="noopener">Cerca su Treccani →</a>
+      </div>
+      <button class="btn-primary" id="end-show-lb" type="button">Vedi classifica</button>
+    </div>
+  </div>
+
+  <!-- Modal: ammonizioni (lista persone da ammonire) -->
+  <div class="backdrop" id="warn-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Ammonizioni di oggi</h2>
+        <button class="close-x" id="warn-close" type="button">Chiudi</button>
+      </div>
+      <div class="hint" id="warn-hint">Puoi ammonire ogni persona una volta al giorno.</div>
+      <div class="lb-list" id="warn-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal: scelta motivo ammonizione -->
+  <div class="backdrop" id="reason-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="reason-title">Perché ammonisci?</h2>
+        <button class="close-x" id="reason-close" type="button">✕</button>
+      </div>
+      <div id="reason-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal: dettaglio cartellino (chi ha ammonito e perché) -->
+  <div class="backdrop" id="detail-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="detail-title">Ammonizioni</h2>
+        <button class="close-x" id="detail-close" type="button">✕</button>
+      </div>
+      <div class="lb-list" id="detail-list"></div>
+    </div>
+  </div>
+
+  <script type="module" src="leaderboard.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
