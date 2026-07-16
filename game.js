@@ -237,18 +237,24 @@ function submitGuess() {
   const isWin = guess === _solution;
   const rowToWin = currentRow;
 
-  // Animazione flip + applica colori
+  if (isWin) {
+    // VITTORIA: prima vibrazione (suspense), poi giro verde, poi coriandoli.
+    // Le lettere NON rivelano subito il colore: restano ferme e vibrano.
+    status = "won";
+    locked = true;
+    saveState();
+    winSequence(rowToWin, result, () => {
+      renderKeyboard();
+      toast("Bravo!");
+      finishGame();
+    });
+    return;
+  }
+
+  // Riga non vincente: rivelazione normale (giro che mostra i colori)
   revealRow(currentRow, result, () => {
     renderKeyboard();
-    if (isWin) {
-      status = "won";
-      locked = true;
-      saveState();
-      winSequence(rowToWin, () => {
-        toast("Bravo!");
-        finishGame();
-      });
-    } else if (currentRow >= MAX_ROWS - 1) {
+    if (currentRow >= MAX_ROWS - 1) {
       status = "lost";
       locked = true;
       saveState();
@@ -261,9 +267,9 @@ function submitGuess() {
   });
 }
 
-// Ritmo tranquillo: flip un po' piu' lento e distanziato
-const FLIP_STEP = 260;   // ritardo tra una lettera e l'altra (era 180)
-const FLIP_HALF = 220;   // meta' giro, applica il colore (era 150)
+// Ritmo tranquillo: flip un pochino piu' lento
+const FLIP_STEP = 290;   // ritardo tra una lettera e l'altra
+const FLIP_HALF = 250;   // meta' giro, applica il colore
 
 function revealRow(r, result, done) {
   const tiles = [];
@@ -277,31 +283,28 @@ function revealRow(r, result, done) {
         tile.classList.remove("correct", "present", "absent");
         tile.classList.add(result[c]);
       }, FLIP_HALF);
-      if (c === WORD_LENGTH - 1) setTimeout(done, 450);
+      if (c === WORD_LENGTH - 1) setTimeout(done, 500);
     }, c * FLIP_STEP);
   });
 }
 
-// ---- Coreografia di vittoria: vibrazione -> bounce -> coriandoli ----
-function winSequence(r, done) {
+// ---- Coreografia di vittoria: vibrazione 3s -> giro verde -> coriandoli ----
+function winSequence(r, result, done) {
   const tiles = [];
   for (let c = 0; c < WORD_LENGTH; c++) {
     tiles.push(boardEl().querySelector(`.tile[data-row="${r}"][data-col="${c}"]`));
   }
-  tiles.forEach((t) => t && t.classList.add("vibrate"));
+  // 1) Vibrazione crescente per 3 secondi (lettere ancora non rivelate)
+  tiles.forEach((t) => t && t.classList.add("vibrate-win"));
   setTimeout(() => {
-    tiles.forEach((t) => t && t.classList.remove("vibrate"));
-    tiles.forEach((t, c) => {
-      setTimeout(() => {
-        if (!t) return;
-        t.classList.remove("bounce");
-        void t.offsetWidth;
-        t.classList.add("bounce");
-      }, c * 110);
+    tiles.forEach((t) => t && t.classList.remove("vibrate-win"));
+    // 2) Giro che rivela il verde, una lettera alla volta
+    revealRow(r, result, () => {
+      // 3) Coriandoli
+      launchConfetti();
+      setTimeout(done, 2600);
     });
-    launchConfetti();
-    setTimeout(done, 5 * 110 + 700);
-  }, 700);
+  }, 3000);
 }
 
 // ---- Coriandoli (canvas leggero, nessuna libreria) ----

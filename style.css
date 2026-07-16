@@ -109,6 +109,7 @@ main {
 
 /* Vibrazione crescente prima del festeggiamento */
 .tile.vibrate { animation: vibrate 0.7s ease-in-out; }
+.tile.vibrate-win { animation: vibrateWin 3s ease-in; }
 /* Bounce di vittoria */
 .tile.bounce { animation: bounce 0.55s ease; }
 
@@ -130,6 +131,21 @@ main {
   70%  { transform: translate(3px,-2px) rotate(2deg); }
   85%  { transform: translate(-3px,2px) rotate(-2deg); }
   100% { transform: translate(0,0) rotate(0); }
+}
+/* Vibrazione crescente 3s: da quasi ferma a molto intensa verso la fine */
+@keyframes vibrateWin {
+  0%    { transform: translate(0,0) rotate(0); }
+  10%   { transform: translate(-0.4px,0.4px) rotate(-0.3deg); }
+  20%   { transform: translate(0.6px,-0.4px) rotate(0.4deg); }
+  30%   { transform: translate(-0.8px,0.6px) rotate(-0.6deg); }
+  40%   { transform: translate(1px,-0.8px) rotate(0.8deg); }
+  50%   { transform: translate(-1.4px,1px) rotate(-1deg); }
+  60%   { transform: translate(1.8px,-1.2px) rotate(1.3deg); }
+  70%   { transform: translate(-2.2px,1.6px) rotate(-1.6deg); }
+  80%   { transform: translate(2.8px,-2px) rotate(2deg); }
+  88%   { transform: translate(-3.4px,2.4px) rotate(-2.4deg); }
+  94%   { transform: translate(3.8px,-2.6px) rotate(2.8deg); }
+  100%  { transform: translate(-4px,2.8px) rotate(-3deg); }
 }
 @keyframes bounce {
   0%   { transform: translateY(0); }
